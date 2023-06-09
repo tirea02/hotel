@@ -65,6 +65,8 @@ public class Hotel {
 }
 
 class HotelWork {
+    String headMessage="";
+    Boolean isLogined = false;
     public static void main(String[] args) {
         HotelWork hotelWork = new HotelWork();
         hotelWork.run();
@@ -73,18 +75,34 @@ class HotelWork {
     public void run() {
         Scanner scanner = new Scanner(System.in);
         ArrayList<User> users = User.loadUserData();
+        int choice = 0;
+
 
         // Display login or signup options
         System.out.println("**************호텔 예약 시스템*************");
 
         boolean running = true;
         while (running) {
+            if(isLogined){
+                System.out.println(headMessage); //show after login
+            }
             System.out.println("1. 로그인");
             System.out.println("2. 회원가입");
             System.out.println("3. 종료");
             System.out.print("메뉴 선택: ");
-            int choice = scanner.nextInt();
+
+            boolean isInputChoiceValid = false;
+            while(!isInputChoiceValid) {
+                try {
+                    choice = scanner.nextInt();
+                    isInputChoiceValid = true;
+                } catch (InputMismatchException e) {
+                    System.out.println("메뉴중에 골라주세요 : ");
+                    scanner.nextLine();
+                }
+            }
             scanner.nextLine(); // Consume the newline character
+
 
             switch (choice) {
                 case 1 -> {
@@ -116,6 +134,9 @@ class HotelWork {
         // Example: Access the user's reservations, make new reservations, etc.
         System.out.println("사용자 " + user.getUserName() + "로 로그인되었습니다.");
         // Implement your desired actions for the user
+        headMessage = user.getUserName() + "님 환영합니다";
+
+
     }
 }
 

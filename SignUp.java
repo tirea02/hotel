@@ -50,9 +50,10 @@ public class SignUp {
             //예약 창으로 이동 ... reservation 함수 호출
 
         }else if(temp.equals(("2"))){
-            makeNewAccount(id);
+            return makeNewAccount(id);
         }else{
             System.out.println("잘못된 입력입니다.");
+            return makeNewAccount(id);
         }
 
         User user = new User(id, userId, pwd, name);
