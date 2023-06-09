@@ -3,6 +3,7 @@ package net.hb.work.hotel;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import net.hb.work.hotel.Login;
 
 
 import static net.hb.work.hotel.User.*;
@@ -66,7 +67,7 @@ public class Hotel {
 
 class HotelWork {
     String headMessage="";
-    Boolean isLogined = false;
+    Boolean isLogin = false;
     public static void main(String[] args) {
         HotelWork hotelWork = new HotelWork();
         hotelWork.run();
@@ -83,7 +84,7 @@ class HotelWork {
 
         boolean running = true;
         while (running) {
-            if(isLogined){
+            if(isLogin){
                 System.out.println(headMessage); //show after login
             }
             System.out.println("1. 로그인");
@@ -130,11 +131,59 @@ class HotelWork {
     }
 
     public void performActions(User user) {
+        Scanner scanner = new Scanner(System.in);
+        isLogin = true;
         // Perform actions for the logged-in user
         // Example: Access the user's reservations, make new reservations, etc.
         System.out.println("사용자 " + user.getUserName() + "로 로그인되었습니다.");
         // Implement your desired actions for the user
         headMessage = user.getUserName() + "님 환영합니다";
+
+        while (isLogin) {
+            System.out.println(headMessage);
+            System.out.println("**************메뉴 선택*************");
+            System.out.println("1. 로그아웃");
+            System.out.println("2. 예약하기");
+            System.out.println("3. 예약 취소하기");
+            System.out.println("4. 예약 내역 보기");
+            System.out.println("5. 개인 정보 수정");
+            System.out.println("6. 비밀번호 변경");
+            System.out.println("7. 회원 탈퇴");
+
+
+            System.out.print("메뉴 선택: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline character
+
+            switch (choice) {
+                case 1:
+                    System.out.println("로그아웃 되었습니다.");
+                    isLogin = false;
+                    break;
+                case 2:
+                    // 예약하기 로직
+                    break;
+                case 3:
+                    // 예약 취소하기 로직
+                    break;
+                case 4:
+                    // 예약 내역 보기 로직
+                    break;
+                case 5:
+                    // 개인 정보 수정 로직
+                    break;
+                case 6:
+                    // 비밀번호 변경 로직
+                    break;
+                case 7:
+                    // 회원 탈퇴 로직
+                    break;
+
+                default:
+                    System.out.println("잘못된 선택입니다. 다시 선택하세요.");
+                    break;
+            }
+        }
 
 
     }
