@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 @Getter
@@ -22,9 +23,9 @@ public class User {
     private String userId;
     private String pwd;
     private String userName;
-    private Room[] rooms;
+    private List<Room> rooms;
 
-    static String fileName = "C:\\Mtest\\workJava\\day0601\\src\\net\\hb\\work\\hotel\\data/userData.json";
+    static String fileName = "C:\\Users\\신정민\\Documents\\GitHub\\hotel/data/userData.json";
 
     public User(String id, String userId, String pwd, String userName) {
         this.id = id;
@@ -33,7 +34,7 @@ public class User {
         this.userName = userName;
     }
 
-    public User(String id, String pwd, String userName, Room[] rooms) {
+    public User(String id, String pwd, String userName, ArrayList<Room> rooms) {
         this.id = id;
         this.pwd = pwd;
         this.userName = userName;
@@ -46,9 +47,24 @@ public class User {
         this.rooms = null;
     }
 
-    public User(String number, String number1) {
+    public User(String id, String pwd) {
+        this.id = id;
+        this.pwd = pwd;
     }
 
+    public void addReservation(Room room, String date) {
+        room.setReserved(true);
+        room.addReservedDate(date);
+        rooms.add(room);
+    }
+
+    public void removeReservation(Room room, String date) {
+        room.removeReservedDate(date);
+        if (room.getReservedDates().isEmpty()) {
+            room.setReserved(false);
+        }
+        rooms.remove(room);
+    }
 
     public static void changeUserData(ArrayList<User> users, String id, Consumer<User> function) {
         //change userdata with function
@@ -83,7 +99,7 @@ public class User {
     }// function saveUserData end
 
     public static ArrayList<User> loadUserData() {
-        ArrayList<User> users = null;
+        ArrayList<User> users;
         try {
             FileReader reader = new FileReader(fileName);
             Gson gson = new Gson();

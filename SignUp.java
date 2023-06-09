@@ -1,20 +1,21 @@
 package net.hb.work.hotel;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SignUp {
 
     static public User makeNewAccount(String id){
 
-        String userId ="";
-        String name = "";
-        String pwd ="";
-        String pwdCheck = "";
+        String userId;
+        String name;
+        String pwd;
+        String pwdCheck;
 
         Scanner sc = new Scanner(System.in);
 
         System.out.println("**************회원가입*************");
-        System.out.println("사용하실 Id를 입력하세요 : ");
+        System.out.print("사용하실 Id를 입력하세요 : ");
         userId =sc.nextLine();
 
         System.out.print("사용하실 비밀번호를 입력하세요 : ");
@@ -47,10 +48,18 @@ public class SignUp {
         if(temp.equals("1")){
             System.out.println("회원가입을 축하드립니다. 예약 창으로 이동됩니다.");
             //예약 창으로 이동 ... reservation 함수 호출
+
+        }else if(temp.equals(("2"))){
+            makeNewAccount(id);
+        }else{
+            System.out.println("잘못된 입력입니다.");
         }
 
+        User user = new User(id, userId, pwd, name);
+        ArrayList<User> users = User.loadUserData();
+        users.add(user);
+        User.saveUserData(users);
 
-        User user = new User(id, userId,  pwd, name);
         System.out.println(user);
 
 

@@ -13,8 +13,8 @@ public class TestCode {
         }
     }
     static public void saveTest(){
-        User user1 = new User("0","1234");
-        User user2 = new User("1", "1234");
+        User user1 = new User("0", "tirea","1234", "albert");
+        User user2 = new User("1", "joe", "1234", "john");
         ArrayList<User> users = new ArrayList<>();
 
         users.add(user1);
