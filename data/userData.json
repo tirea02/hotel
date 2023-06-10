@@ -1,0 +1,38 @@
+[
+  {
+    "id": "0",
+    "userId": "tirea",
+    "pwd": "1234",
+    "userName": "albert",
+    "userReservedRooms": [
+      {
+        "roomNumber": "101",
+        "userid": "tirea",
+        "reserved": true,
+        "price": 0,
+        "reservedDay": 0,
+        "reservedDates": [
+          ""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "1",
+    "userId": "sophia123",
+    "pwd": "1234",
+    "userName": "sophia",
+    "userReservedRooms": [
+      {
+        "roomNumber": "205",
+        "userid": "sophia123",
+        "reserved": true,
+        "price": 0,
+        "reservedDay": 0,
+        "reservedDates": [
+          ""
+        ]
+      }
+    ]
+  }
+]

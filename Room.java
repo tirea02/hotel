@@ -24,6 +24,17 @@ public class Room {
     }
 
     //getter and setter auto generate by annotation
+
+    public static Room findRoomByNumber(Room[][] rooms, String roomNumber) {
+        for (Room[] room : rooms) {
+            for (int j = 0; j < room.length; j++) {
+                if (room[j].getRoomNumber().equals(roomNumber)) {
+                    return room[j];
+                }
+            }
+        }
+        return null; // Room not found
+    }
     public void addReservedDate(String date) {
         reservedDates.add(date);
     }

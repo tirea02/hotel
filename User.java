@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,28 +24,29 @@ public class User {
     private String userId;
     private String pwd;
     private String userName;
-    private List<Room> rooms;
+    private List<Room> userReservedRooms;
 
-    static String fileName = "C:\\Users\\신정민\\Documents\\GitHub\\hotel/data/userData.json";
+    static String userFileName = "C:\\Users\\신정민\\Documents\\GitHub\\hotel/data/userData.json";
 
     public User(String id, String userId, String pwd, String userName) {
         this.id = id;
         this.userId = userId;
         this.pwd = pwd;
         this.userName = userName;
+        this.userReservedRooms = new ArrayList<Room>();
     }
 
-    public User(String id, String pwd, String userName, ArrayList<Room> rooms) {
+    public User(String id, String pwd, String userName, ArrayList<Room> userReservedRooms) {
         this.id = id;
         this.pwd = pwd;
         this.userName = userName;
-        this.rooms = rooms;
+        this.userReservedRooms = userReservedRooms;
     }
     public User(String id, String pwd, String userName) {
         this.id = id;
         this.pwd = pwd;
         this.userName = userName;
-        this.rooms = null;
+        this.userReservedRooms = new ArrayList<Room>();
     }
 
     public User(String id, String pwd) {
@@ -55,7 +57,7 @@ public class User {
     public void addReservation(Room room, String date) {
         room.setReserved(true);
         room.addReservedDate(date);
-        rooms.add(room);
+        userReservedRooms.add(room);
     }
 
     public void removeReservation(Room room, String date) {
@@ -63,18 +65,34 @@ public class User {
         if (room.getReservedDates().isEmpty()) {
             room.setReserved(false);
         }
-        rooms.remove(room);
+        userReservedRooms.remove(room);
     }
 
-    public static void changeUserData(ArrayList<User> users, String id, Consumer<User> function) {
-        //change userdata with function
+    public static User findUserWithId(ArrayList<User> users, String userId){
         User foundUser = null;
         for (User user : users) {
-            if (user.getId().equals(id)) {
+            if (user.getUserId().equals(userId)) {
                 foundUser = user;
                 break;
             }
         }
+        return foundUser;
+    }
+
+    public void updateUsers(ArrayList<User> users, User updatedUser) {
+        for (int i = 0; i < users.size(); i++) {
+            User user = users.get(i);
+            if (user.getUserId().equals(updatedUser.getUserId())) {
+                // Update the user in the list
+                users.set(i, updatedUser);
+                return;
+            }
+        }
+    }
+
+    public static void changeUserData(ArrayList<User> users, String userId, Consumer<User> function) {
+        //change userdata with function
+        User foundUser = findUserWithId(users, userId);
 
         if (foundUser != null) {
             function.accept(foundUser); // Invoke the function on the user object
@@ -89,7 +107,7 @@ public class User {
         String json = gson.toJson(users);
 
         try {
-            FileWriter file = new FileWriter(fileName);
+            FileWriter file = new FileWriter(userFileName);
             file.write(json);
             file.flush();
             file.close();
@@ -99,9 +117,14 @@ public class User {
     }// function saveUserData end
 
     public static ArrayList<User> loadUserData() {
-        ArrayList<User> users;
+        ArrayList<User> users = new ArrayList<>();
+        File file = new File(userFileName);
+        if (!file.exists()) {
+            // File does not exist, return an empty list
+            return users;
+        }
         try {
-            FileReader reader = new FileReader(fileName);
+            FileReader reader = new FileReader(file);
             Gson gson = new Gson();
             users = gson.fromJson(reader, new TypeToken<ArrayList<User>>() {
             }.getType());

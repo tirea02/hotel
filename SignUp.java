@@ -66,4 +66,4 @@ public class SignUp {
 
         return user;
     }
-}
+}//SignUp class END

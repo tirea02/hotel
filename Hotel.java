@@ -1,24 +1,39 @@
 package net.hb.work.hotel;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import lombok.Getter;
+import lombok.Setter;
 import net.hb.work.hotel.Login;
 
 
+import static net.hb.work.hotel.Room.findRoomByNumber;
 import static net.hb.work.hotel.User.*;
 
+
+@Getter
+@Setter
 
 public class Hotel {
     private Room[][] rooms;
     private Scanner sc;
 
-
+    static String hotelFileName = "C:\\Users\\신정민\\Documents\\GitHub\\hotel/data/hotelData.json";
 
     public Hotel() {
         rooms = null;
         sc = new Scanner(System.in);
     }
+
+
 
     public void generateHotelRoom(){
         int totalFloors = 0;
@@ -60,8 +75,116 @@ public class Hotel {
         }
     }//function generateHotelRoom end
 
-    public void makeReservation(){
+
+
+    public void printListOfRooms(Room[][] rooms){
+
+        System.out.println("전체 예약 상황 확인");
+
+        if (rooms == null) {
+            System.out.println("방을 먼저 생성해야 합니다.");
+            return;
+        }
+
+        for (int i = 0; i < rooms.length; i++) {
+            for (int j = 0; j < rooms[i].length; j++) {
+                String roomNumber = String.format("%d%02d", i + 1, j + 1);
+                System.out.print(roomNumber + "\t");
+            }
+            System.out.println();
+
+            for (int j = 0; j < rooms[i].length; j++) {
+                if (rooms[i][j].isReserved()) {
+                    //load users
+                    ArrayList<User> loadedUsersData = loadUserData();
+                    String userId = rooms[i][j].getUserid();
+                    System.out.print(findUserWithId(loadedUsersData,userId).getUserName());
+                }
+                System.out.print("\t\t");
+            }
+            System.out.println();
+        }
+
+    }//function printListOfRooms end
+
+    public void updateRooms(){
+
     }
+    public void makeReservation(User user, ArrayList<User> users) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Display available rooms
+        this.printListOfRooms(this.getRooms());
+
+        // Get user input for room selection
+        System.out.print("예약할 방 번호를 입력하세요: ");
+        String roomNumber = scanner.nextLine();
+
+        // Find the selected room in the hotel
+        Room selectedRoom = findRoomByNumber(this.getRooms(), roomNumber);
+
+        if (selectedRoom == null) {
+            System.out.println("해당 방 번호가 유효하지 않습니다.");
+            return;
+        }
+
+        if (selectedRoom.isReserved()) {
+            System.out.println("이미 예약된 방입니다.");
+            return;
+        }
+
+        // Update room reservation status and user information
+        selectedRoom.setReserved(true);
+        selectedRoom.setUserid(user.getUserId());
+
+        //update users
+        user.updateUsers(users, user);
+
+        //date is not implemented yet so im adding temp
+        String date ="";
+        // Update user's reservation information
+
+        user.addReservation(selectedRoom,date);
+
+
+        // Save updated hotel and user data
+        this.saveHotelData(this);
+        saveUserData(users);
+
+        System.out.println("예약이 완료되었습니다.");
+    }
+
+    public void saveHotelData(Hotel hotel) {
+        try (FileWriter writer = new FileWriter(hotelFileName)) {
+            final Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Scanner.class, new ScannerTypeAdapter())
+                    .setPrettyPrinting()
+                    .create();
+            gson.toJson(hotel, writer);
+            System.out.println("호텔 데이터가 저장되었습니다.");
+        } catch (IOException e) {
+            System.out.println("호텔 데이터를 저장할 수 없습니다.");
+        }
+    }
+
+    public static Hotel loadHotelData() {
+        File file = new File(hotelFileName);
+        if (!file.exists()) {
+            System.out.println("호텔 데이터 파일이 존재하지 않습니다. 새로운 파일을 생성합니다.");
+            return new Hotel();
+        }
+        try (FileReader reader = new FileReader(file)) {
+            final Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Scanner.class, new ScannerTypeAdapter())
+                    .setPrettyPrinting()
+                    .create();
+            return gson.fromJson(reader, Hotel.class);
+        } catch (IOException e) {
+            System.out.println("호텔 데이터를 로드할 수 없습니다.");
+        }
+        return null;
+    }
+
 
 }
 
@@ -69,12 +192,25 @@ class HotelWork {
     String headMessage="";
     Boolean isLogin = false;
     public static void main(String[] args) {
+        //generate new hotel
         HotelWork hotelWork = new HotelWork();
-        hotelWork.run();
+        //check if hotel present and load data
+        Hotel loadedHotel = Hotel.loadHotelData();
+        if (loadedHotel == null) {
+            Hotel newHotel = new Hotel();
+            hotelWork.run(newHotel);
+        } else {
+            hotelWork.run(loadedHotel);
+        }
+
     }
 
-    public void run() {
-        Scanner scanner = new Scanner(System.in);
+    public void run(Hotel hotel) {
+        Scanner sc = new Scanner(System.in);
+        // chekc if room is not loaded
+        if (hotel.getRooms() == null) {
+            hotel.generateHotelRoom();
+        }
         ArrayList<User> users = User.loadUserData();
         int choice = 0;
 
@@ -89,39 +225,41 @@ class HotelWork {
             }
             System.out.println("1. 로그인");
             System.out.println("2. 회원가입");
-            System.out.println("3. 종료");
+            System.out.println("3. 예약상황 확인");
+            System.out.println("9. 종료");
             System.out.print("메뉴 선택: ");
 
             boolean isInputChoiceValid = false;
             while(!isInputChoiceValid) {
                 try {
-                    choice = scanner.nextInt();
+                    choice = sc.nextInt();
                     isInputChoiceValid = true;
                 } catch (InputMismatchException e) {
                     System.out.println("메뉴중에 골라주세요 : ");
-                    scanner.nextLine();
+                    sc.nextLine();
                 }
             }
-            scanner.nextLine(); // Consume the newline character
-
+            sc.nextLine(); // Consume the newline character
 
             switch (choice) {
                 case 1 -> {
                     User user = Login.loginUser();
                     if (user != null) {
-                        performActions(user);
+                        performActions(hotel, user);
                     }
                 }
                 case 2 -> {
                     users = User.loadUserData();
                     String newUserId = Integer.toString(users.size()); //size() 는  index +1 때문에 그대로 받으면됨
-
                     User newUser = SignUp.makeNewAccount(newUserId);
                     if (newUser != null) {
-                        performActions(newUser);
+                        performActions(hotel, newUser);
                     }
                 }
-                case 3 -> {
+                case 3->{
+                    hotel.printListOfRooms(hotel.getRooms());
+                }
+                case 9 -> {
                     System.out.println("프로그램을 종료합니다.");
                     running = false;
                 }
@@ -130,7 +268,7 @@ class HotelWork {
         }
     }
 
-    public void performActions(User user) {
+    public void performActions(Hotel hotel, User user) {
         Scanner scanner = new Scanner(System.in);
         isLogin = true;
         // Perform actions for the logged-in user
@@ -151,41 +289,42 @@ class HotelWork {
             System.out.println("7. 회원 탈퇴");
 
 
+
             System.out.print("메뉴 선택: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
 
             switch (choice) {
-                case 1:
+                case 1 -> {
                     System.out.println("로그아웃 되었습니다.");
                     isLogin = false;
-                    break;
-                case 2:
-                    // 예약하기 로직
-                    break;
-                case 3:
+                }
+                case 2 -> {
+                        ArrayList < User > users = loadUserData();
+                    hotel.makeReservation(user, users);
+                }
+                case 3 -> {
                     // 예약 취소하기 로직
-                    break;
-                case 4:
+                }
+                case 4 -> {
                     // 예약 내역 보기 로직
-                    break;
-                case 5:
+                }
+                case 5-> {
                     // 개인 정보 수정 로직
-                    break;
-                case 6:
+                }
+                case 6 -> {
                     // 비밀번호 변경 로직
-                    break;
-                case 7:
+                }
+                case 7 -> {
                     // 회원 탈퇴 로직
-                    break;
-
-                default:
+                }
+                default -> {
                     System.out.println("잘못된 선택입니다. 다시 선택하세요.");
-                    break;
+                }
             }
         }
 
 
-    }
-}
+    }// function performAction end
+}//HotelWork class END
 

@@ -1,0 +1,84 @@
+{
+  "rooms": [
+    [
+      {
+        "roomNumber": "101",
+        "userid": "tirea",
+        "reserved": true,
+        "price": 0,
+        "reservedDay": 0,
+        "reservedDates": [
+          ""
+        ]
+      },
+      {
+        "roomNumber": "102",
+        "reserved": false,
+        "price": 0,
+        "reservedDay": 0,
+        "reservedDates": []
+      },
+      {
+        "roomNumber": "103",
+        "reserved": false,
+        "price": 0,
+        "reservedDay": 0,
+        "reservedDates": []
+      },
+      {
+        "roomNumber": "104",
+        "reserved": false,
+        "price": 0,
+        "reservedDay": 0,
+        "reservedDates": []
+      },
+      {
+        "roomNumber": "105",
+        "reserved": false,
+        "price": 0,
+        "reservedDay": 0,
+        "reservedDates": []
+      }
+    ],
+    [
+      {
+        "roomNumber": "201",
+        "reserved": false,
+        "price": 0,
+        "reservedDay": 0,
+        "reservedDates": []
+      },
+      {
+        "roomNumber": "202",
+        "reserved": false,
+        "price": 0,
+        "reservedDay": 0,
+        "reservedDates": []
+      },
+      {
+        "roomNumber": "203",
+        "reserved": false,
+        "price": 0,
+        "reservedDay": 0,
+        "reservedDates": []
+      },
+      {
+        "roomNumber": "204",
+        "reserved": false,
+        "price": 0,
+        "reservedDay": 0,
+        "reservedDates": []
+      },
+      {
+        "roomNumber": "205",
+        "userid": "sophia123",
+        "reserved": true,
+        "price": 0,
+        "reservedDay": 0,
+        "reservedDates": [
+          ""
+        ]
+      }
+    ]
+  ]
+}
