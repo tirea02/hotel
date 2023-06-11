@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -15,7 +16,7 @@ public class Room {
     private boolean reserved;
     private int price;
     private int reservedDay;
-    private List<String> reservedDates; // List to store reserved dates
+    private List<Date> reservedDates; // List to store reserved dates
 
     public Room(String roomNumber) {
         this.roomNumber = roomNumber;
@@ -27,19 +28,30 @@ public class Room {
 
     public static Room findRoomByNumber(Room[][] rooms, String roomNumber) {
         for (Room[] room : rooms) {
-            for (int j = 0; j < room.length; j++) {
-                if (room[j].getRoomNumber().equals(roomNumber)) {
-                    return room[j];
+            for (Room value : room) {
+                if (value.getRoomNumber().equals(roomNumber)) {
+                    return value;
                 }
             }
         }
         return null; // Room not found
+    }//function findRoomByNumber end
+
+    public void addReservedDateRange(Room room, Date startDate, Date endDate) {
+        long startMillis = startDate.getTime();
+        long endMillis = endDate.getTime();
+
+        for (long millis = startMillis; millis <= endMillis; millis += 24 * 60 * 60 * 1000) {
+            Date date = new Date(millis);
+            room.addReservedDate(date);
+        }
     }
-    public void addReservedDate(String date) {
+
+    public void addReservedDate(Date date) {
         reservedDates.add(date);
     }
 
-    public void removeReservedDate(String date) {
+    public void removeReservedDate(Date date) {
         reservedDates.remove(date);
     }
 
@@ -49,6 +61,4 @@ public class Room {
     }
 
 
-
-
-}
+}//Room class END

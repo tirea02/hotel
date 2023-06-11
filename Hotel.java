@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -12,7 +15,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.Setter;
-import net.hb.work.hotel.Login;
 
 
 import static net.hb.work.hotel.Room.findRoomByNumber;
@@ -26,7 +28,7 @@ public class Hotel {
     private Room[][] rooms;
     private Scanner sc;
 
-    static String hotelFileName = "C:\\Users\\신정민\\Documents\\GitHub\\hotel/data/hotelData.json";
+    static String hotelFileName = "data/hotelData.json";
 
     public Hotel() {
         rooms = null;
@@ -78,7 +80,6 @@ public class Hotel {
 
 
     public void printListOfRooms(Room[][] rooms){
-
         System.out.println("전체 예약 상황 확인");
 
         if (rooms == null) {
@@ -89,7 +90,7 @@ public class Hotel {
         for (int i = 0; i < rooms.length; i++) {
             for (int j = 0; j < rooms[i].length; j++) {
                 String roomNumber = String.format("%d%02d", i + 1, j + 1);
-                System.out.print(roomNumber + "\t");
+                System.out.print(roomNumber + "\t\t\t\t\t");
             }
             System.out.println();
 
@@ -100,12 +101,27 @@ public class Hotel {
                     String userId = rooms[i][j].getUserid();
                     System.out.print(findUserWithId(loadedUsersData,userId).getUserName());
                 }
-                System.out.print("\t\t");
+                System.out.print("\t\t\t\t\t");
             }
             System.out.println();
         }
 
     }//function printListOfRooms end
+
+    public void printSelectedUserRoomList(User user){
+        System.out.println(user.getUserName() + "님 예약상황 확인");
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        for (Room room : user.getUserReservedRooms()) {
+            String roomNumber = room.getRoomNumber();
+            Date startDate = room.getReservedDates().get(0);
+            Date endDate = room.getReservedDates().get(room.getReservedDates().size() - 1);
+            String startDateStr = dateFormat.format(startDate);
+            String endDateStr = dateFormat.format(endDate);
+            System.out.println(roomNumber + " : " + startDateStr + " ~ " + endDateStr);
+        }
+    }//function printSelectedUserRoomList end
 
     public void updateRooms(){
 
@@ -137,22 +153,48 @@ public class Hotel {
         selectedRoom.setReserved(true);
         selectedRoom.setUserid(user.getUserId());
 
+        // Get user input for start and end dates
+        System.out.print("예약 시작 날짜를 입력하세요 (YYYY-MM-DD): ");
+        String startDateString = scanner.nextLine();
+        System.out.print("예약 종료 날짜를 입력하세요 (YYYY-MM-DD): ");
+        String endDateString = scanner.nextLine();
+
+        // Convert start and end date strings to Date objects
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate;
+        Date endDate;
+        try {
+            startDate = dateFormat.parse(startDateString);
+            endDate = dateFormat.parse(endDateString);
+        } catch (ParseException e) {
+            System.out.println("잘못된 날짜 형식입니다. 예약이 취소됩니다.");
+            selectedRoom.setReserved(false);
+            selectedRoom.setUserid(null);
+            return;
+        }
+
+        // Update user's reservation information
+        user.addReservation(selectedRoom, startDate, endDate);
+
         //update users
         user.updateUsers(users, user);
-
-        //date is not implemented yet so im adding temp
-        String date ="";
-        // Update user's reservation information
-
-        user.addReservation(selectedRoom,date);
-
 
         // Save updated hotel and user data
         this.saveHotelData(this);
         saveUserData(users);
 
         System.out.println("예약이 완료되었습니다.");
+    }//function makeReservation end
+
+    public void cancelReservation(User user, ArrayList<User> users){
+        System.out.println(user.getUserName()+"님 취소하실 방을 골라주세요");
+
+        printListOfRooms(this.getRooms());
+
+
     }
+
+
 
     public void saveHotelData(Hotel hotel) {
         try (FileWriter writer = new FileWriter(hotelFileName)) {
@@ -301,13 +343,13 @@ class HotelWork {
                 }
                 case 2 -> {
                         ArrayList < User > users = loadUserData();
-                    hotel.makeReservation(user, users);
+                        hotel.makeReservation(user, users);
                 }
                 case 3 -> {
                     // 예약 취소하기 로직
                 }
                 case 4 -> {
-                    // 예약 내역 보기 로직
+                    hotel.printSelectedUserRoomList(user);
                 }
                 case 5-> {
                     // 개인 정보 수정 로직

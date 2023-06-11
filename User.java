@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -26,7 +27,7 @@ public class User {
     private String userName;
     private List<Room> userReservedRooms;
 
-    static String userFileName = "C:\\Users\\신정민\\Documents\\GitHub\\hotel/data/userData.json";
+    static String userFileName = "data/userData.json";
 
     public User(String id, String userId, String pwd, String userName) {
         this.id = id;
@@ -54,13 +55,13 @@ public class User {
         this.pwd = pwd;
     }
 
-    public void addReservation(Room room, String date) {
+    public void addReservation(Room room, Date startDate, Date endDate) {
+        room.addReservedDateRange(room, startDate, endDate);
         room.setReserved(true);
-        room.addReservedDate(date);
         userReservedRooms.add(room);
     }
 
-    public void removeReservation(Room room, String date) {
+    public void removeReservation(Room room, Date date) {
         room.removeReservedDate(date);
         if (room.getReservedDates().isEmpty()) {
             room.setReserved(false);

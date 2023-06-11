@@ -42,7 +42,7 @@ public class SignUp {
         name = sc.nextLine();
 
         System.out.println(name+"고객님 ID : "+userId+" pwd : "+pwd+" 로 회원가입을 신청하셨습니다.");
-        System.out.println("맞으시면 1번을 틀리시면 2번을 눌러주세요");
+        System.out.print("맞으시면 1번을 틀리시면 2번을 눌러주세요");
 
         String temp = sc.nextLine();
         if(temp.equals("1")){
