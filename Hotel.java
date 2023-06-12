@@ -24,12 +24,14 @@ import static net.hb.work.hotel.User.*;
 public class Hotel {
     private Room[][] rooms;
     private Scanner sc;
+    private Date today;
 
     static String hotelFileName = "src/net/hb/work/hotel/data/hotelData.json";
 
     public Hotel() {
         rooms = null;
         sc = new Scanner(System.in);
+        today = new Date();
     }
 
 
@@ -151,23 +153,33 @@ public class Hotel {
         selectedRoom.setUserId(user.getUserId());
 
         // Get user input for start and end dates
-        System.out.print("예약 시작 날짜를 입력하세요 (YYYY-MM-DD): ");
-        String startDateString = scanner.nextLine();
-        System.out.print("예약 종료 날짜를 입력하세요 (YYYY-MM-DD): ");
-        String endDateString = scanner.nextLine();
+        Date today = this.getToday(); // Get current date from the hotel
+        Date startDate = null;
+        Date endDate = null;
+        boolean validDates = false;
 
-        // Convert start and end date strings to Date objects
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date startDate;
-        Date endDate;
-        try {
-            startDate = dateFormat.parse(startDateString);
-            endDate = dateFormat.parse(endDateString);
-        } catch (ParseException e) {
-            System.out.println("잘못된 날짜 형식입니다. 예약이 취소됩니다.");
-            selectedRoom.setReserved(false);
-            selectedRoom.setUserId(null);
-            return;
+        while (!validDates) {
+            System.out.print("예약 시작 날짜를 입력하세요 (YYYY-MM-DD): ");
+            String startDateString = scanner.nextLine();
+            System.out.print("예약 종료 날짜를 입력하세요 (YYYY-MM-DD): ");
+            String endDateString = scanner.nextLine();
+
+            // Convert start and end date strings to Date objects
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                startDate = dateFormat.parse(startDateString);
+                endDate = dateFormat.parse(endDateString);
+
+                // Compare start date with today's date
+                if (startDate.before(today)) {
+                    System.out.println("시작 날짜가 오늘보다 이전입니다. 다시 입력하세요.");
+                    continue;
+                }
+
+                validDates = true; // Dates are valid, exit the loop
+            } catch (ParseException e) {
+                System.out.println("잘못된 날짜 형식입니다. 다시 입력하세요.");
+            }
         }
 
         // Update user's reservation information
@@ -209,7 +221,6 @@ public class Hotel {
                 }
             }
         }
-
 
         // Find the selected room in the hotel
         Room selectedRoom = Room.findRoomByNumber(this.getRooms(), selectedRoomNumber);
@@ -310,9 +321,6 @@ class HotelWork {
 
         boolean running = true;
         while (running) {
-            if(isLogin){
-                System.out.println(headMessage); //show after login
-            }
             System.out.println("1. 로그인");
             System.out.println("2. 회원가입");
             System.out.println("3. 예약상황 확인");
@@ -342,9 +350,7 @@ class HotelWork {
                     users = User.loadUserData();
                     String newUserId = Integer.toString(users.size()); //size() 는  index +1 때문에 그대로 받으면됨
                     User newUser = SignUp.makeNewAccount(newUserId);
-                    if (newUser != null) {
-                        performActions(hotel, newUser);
-                    }
+                    performActions(hotel, newUser);
                 }
                 case 3->{
                     hotel.printListOfRooms(hotel.getRooms());
@@ -362,9 +368,7 @@ class HotelWork {
         Scanner scanner = new Scanner(System.in);
         isLogin = true;
         // Perform actions for the logged-in user
-        // Example: Access the user's reservations, make new reservations, etc.
         System.out.println("사용자 " + user.getUserName() + "로 로그인되었습니다.");
-        // Implement your desired actions for the user
         headMessage = user.getUserName() + "님 환영합니다";
 
         while (isLogin) {
@@ -379,10 +383,8 @@ class HotelWork {
             System.out.println("7. 회원 탈퇴");
 
 
-
             System.out.print("메뉴 선택: ");
             int choice = Integer.parseInt(scanner.nextLine());
-
 
             switch (choice) {
                 case 1 -> {

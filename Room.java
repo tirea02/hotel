@@ -14,6 +14,7 @@ public class Room {
 
     private String roomNumber; //복수의 방 예약시 체크
     private String userId;
+    private String roomType;
     private boolean reserved;
     private int price;
     private int reservedDay;
