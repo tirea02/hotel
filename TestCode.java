@@ -20,7 +20,7 @@ public class TestCode {
         users.add(user1);
         users.add(user2);
 
-        changeUserData(users,"1", user ->{
+        user1.changeUserData(users,"1", user ->{
             user.setUserName("sophia");
         });
 

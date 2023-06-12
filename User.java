@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 @Getter
@@ -55,6 +56,17 @@ public class User {
         this.pwd = pwd;
     }
 
+    public boolean equals(Object obj) {   //Override of equals for remove(Object o)
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        User otherUser = (User) obj;
+        return Objects.equals(this.userId, otherUser.userId);
+    }
+
     public void addReservation(Room room, Date startDate, Date endDate) {
         room.addReservedDateRange(room, startDate, endDate);
         room.setReserved(true);
@@ -82,7 +94,7 @@ public class User {
         return foundUser;
     }
 
-    public void updateUsers(ArrayList<User> users, User updatedUser) {
+    public static void updateUsers(ArrayList<User> users, User updatedUser) {
         for (int i = 0; i < users.size(); i++) {
             User user = users.get(i);
             if (user.getUserId().equals(updatedUser.getUserId())) {
@@ -93,7 +105,7 @@ public class User {
         }
     }
 
-    public static void changeUserData(ArrayList<User> users, String userId, Consumer<User> function) {
+    public  void changeUserData(ArrayList<User> users, String userId, Consumer<User> function) {
         //change userdata with function
         User foundUser = findUserWithId(users, userId);
 
@@ -102,6 +114,8 @@ public class User {
         } else {
             System.out.println("User not found");
         }
+        updateUsers(users, foundUser);
+        saveUserData(users);
     }// function changeUserData end
 
 

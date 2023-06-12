@@ -174,12 +174,11 @@ public class Hotel {
         user.addReservation(selectedRoom, startDate, endDate);
 
         //update users
-        user.updateUsers(users, user);
+        updateUsers(users, user);
 
         // Save updated hotel and user data
         this.saveHotelData(this);
         saveUserData(users);
-//        scanner.close();
 
         System.out.println("예약이 완료되었습니다.");
     }//function makeReservation end
@@ -211,19 +210,12 @@ public class Hotel {
             }
         }
 
-//        Iterator<Room> iterator = user.getUserReservedRooms().iterator();
-//        while (iterator.hasNext()) {
-//            Room room = iterator.next();
-//            if (room.getRoomNumber().equals(selectedRoomNumber)) {
-//                iterator.remove();
-//                break;
-//            }
-//        }
 
         // Find the selected room in the hotel
         Room selectedRoom = Room.findRoomByNumber(this.getRooms(), selectedRoomNumber);
 
         // remove room from Room[][]
+        assert selectedRoom != null;
         selectedRoom.setReserved(false);
         selectedRoom.setUserid(null);
         selectedRoom.setReservedDates(null);
@@ -233,12 +225,11 @@ public class Hotel {
         user.removeReservation(selectedRoom);
 
         //update users
-        user.updateUsers(users, user);
+        updateUsers(users, user);
 
         // Save updated hotel and user data
         this.saveHotelData(this);
         saveUserData(users);
-//        scanner.close();
 
         System.out.println("예약이 취소되었습니다.");
 
@@ -397,8 +388,8 @@ class HotelWork {
                     isLogin = false;
                 }
                 case 2 -> {
-                        ArrayList < User > users = loadUserData();
-                        hotel.makeReservation(user, users);
+                    ArrayList < User > users = loadUserData();
+                    hotel.makeReservation(user, users);
                 }
                 case 3 -> {
                     // 예약 취소하기 로직
@@ -410,12 +401,26 @@ class HotelWork {
                 }
                 case 5-> {
                     // 개인 정보 수정 로직
+                    ArrayList < User > users = loadUserData();
+                    user.changeUserData(users, user.getUserId(), UserUtils::changeName);
                 }
                 case 6 -> {
                     // 비밀번호 변경 로직
+                    ArrayList < User > users = loadUserData();
+                    user.changeUserData(users, user.getUserId(), UserUtils::changePassword);
                 }
                 case 7 -> {
                     // 회원 탈퇴 로직
+                    ArrayList < User > users = loadUserData();
+                    System.out.println("탈퇴하시겠습니까? 이 결정은 번복할 수 없습니다.");
+                    System.out.print("정말 탈퇴하시려면 1번을 취소하시려면 아무키나 입력하세요 : ");
+                    int tempInput = Integer.parseInt(scanner.nextLine());
+                    if(tempInput==1){
+                        System.out.println("정상 탈퇴 처리 되었습니다.");
+                        users.remove(user);
+                        saveUserData(users);
+                        isLogin = false;
+                    }
                 }
                 default -> {
                     System.out.println("잘못된 선택입니다. 다시 선택하세요.");
