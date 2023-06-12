@@ -7,41 +7,25 @@
     "userReservedRooms": [
       {
         "roomNumber": "103",
-        "userid": "tirea",
+        "userId": "tirea",
         "reserved": true,
         "price": 0,
         "reservedDay": 0,
         "reservedDates": [
-          "Jun 12, 2023, 12:00:00 AM",
-          "Jun 13, 2023, 12:00:00 AM",
-          "Jun 14, 2023, 12:00:00 AM"
+          "Aug 3, 2023, 12:00:00 AM",
+          "Aug 4, 2023, 12:00:00 AM",
+          "Aug 5, 2023, 12:00:00 AM"
         ]
       },
       {
         "roomNumber": "205",
-        "userid": "tirea",
+        "userId": "tirea",
         "reserved": true,
         "price": 0,
         "reservedDay": 0,
         "reservedDates": [
           "Jun 12, 2023, 12:00:00 AM",
-          "Jun 13, 2023, 12:00:00 AM",
-          "Jun 14, 2023, 12:00:00 AM",
-          "Jun 15, 2023, 12:00:00 AM",
-          "Jun 16, 2023, 12:00:00 AM"
-        ]
-      },
-      {
-        "roomNumber": "101",
-        "userid": "tirea",
-        "reserved": true,
-        "price": 0,
-        "reservedDay": 0,
-        "reservedDates": [
-          "Jun 15, 2023, 12:00:00 AM",
-          "Jun 16, 2023, 12:00:00 AM",
-          "Jun 17, 2023, 12:00:00 AM",
-          "Jun 18, 2023, 12:00:00 AM"
+          "Jun 13, 2023, 12:00:00 AM"
         ]
       }
     ]
@@ -54,30 +38,13 @@
     "userReservedRooms": [
       {
         "roomNumber": "201",
-        "userid": "sophia123",
+        "userId": "sophia123",
         "reserved": true,
         "price": 0,
         "reservedDay": 0,
         "reservedDates": [
-          "Jun 12, 2023, 12:00:00 AM",
-          "Jun 13, 2023, 12:00:00 AM",
-          "Jun 14, 2023, 12:00:00 AM",
-          "Jun 15, 2023, 12:00:00 AM",
-          "Jun 16, 2023, 12:00:00 AM",
-          "Jun 17, 2023, 12:00:00 AM",
-          "Jun 18, 2023, 12:00:00 AM"
-        ]
-      },
-      {
-        "roomNumber": "203",
-        "userid": "sophia123",
-        "reserved": true,
-        "price": 0,
-        "reservedDay": 0,
-        "reservedDates": [
-          "Aug 23, 2023, 12:00:00 AM",
-          "Aug 24, 2023, 12:00:00 AM",
-          "Aug 25, 2023, 12:00:00 AM"
+          "Jun 25, 2023, 12:00:00 AM",
+          "Jun 26, 2023, 12:00:00 AM"
         ]
       }
     ]

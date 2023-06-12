@@ -95,7 +95,7 @@ public class Hotel {
                 if (rooms[i][j].isReserved()) {
                     //load users
                     ArrayList<User> loadedUsersData = loadUserData();
-                    String userId = rooms[i][j].getUserid();
+                    String userId = rooms[i][j].getUserId();
                     System.out.print(findUserWithId(loadedUsersData,userId).getUserName());
                 }
                 System.out.print("\t\t\t\t\t");
@@ -148,7 +148,7 @@ public class Hotel {
 
         // Update room reservation status and user information
         selectedRoom.setReserved(true);
-        selectedRoom.setUserid(user.getUserId());
+        selectedRoom.setUserId(user.getUserId());
 
         // Get user input for start and end dates
         System.out.print("예약 시작 날짜를 입력하세요 (YYYY-MM-DD): ");
@@ -166,7 +166,7 @@ public class Hotel {
         } catch (ParseException e) {
             System.out.println("잘못된 날짜 형식입니다. 예약이 취소됩니다.");
             selectedRoom.setReserved(false);
-            selectedRoom.setUserid(null);
+            selectedRoom.setUserId(null);
             return;
         }
 
@@ -217,7 +217,7 @@ public class Hotel {
         // remove room from Room[][]
         assert selectedRoom != null;
         selectedRoom.setReserved(false);
-        selectedRoom.setUserid(null);
+        selectedRoom.setUserId(null);
         selectedRoom.setReservedDates(null);
 
 
@@ -280,15 +280,17 @@ class HotelWork {
 //        System.out.println("Working Directory: " + workingDir);
 
 
-        //generate new hotel
+        //generate new hotelWork
         HotelWork hotelWork = new HotelWork();
         //check if hotel present and load data
         Hotel loadedHotel = Hotel.loadHotelData();
-        if (loadedHotel == null) {
+        if (loadedHotel != null) {
+            hotelWork.run(loadedHotel);
+        } else {
+            // Handle the case where the hotel data couldn't be loaded
+            System.out.println("Failed to load hotel data. Creating a new hotel.");
             Hotel newHotel = new Hotel();
             hotelWork.run(newHotel);
-        } else {
-            hotelWork.run(loadedHotel);
         }
 
     }
@@ -427,7 +429,6 @@ class HotelWork {
                 }
             }
         }
-
 
     }// function performAction end
 }//HotelWork class END

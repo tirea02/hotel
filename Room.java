@@ -6,13 +6,14 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
 public class Room {
 
     private String roomNumber; //복수의 방 예약시 체크
-    private String userid;
+    private String userId;
     private boolean reserved;
     private int price;
     private int reservedDay;
@@ -25,6 +26,17 @@ public class Room {
     }
 
     //getter and setter auto generate by annotation
+
+    public boolean equals(Object obj) {   //Override of equals for remove(Object o)
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Room otherRoom = (Room) obj;
+        return Objects.equals(this.roomNumber, otherRoom.roomNumber);
+    }
 
     public static Room findRoomByNumber(Room[][] rooms, String roomNumber) {
         for (Room[] room : rooms) {

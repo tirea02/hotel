@@ -78,8 +78,8 @@ public class User {
         if (userReservedRooms.contains(room)) {
             userReservedRooms.remove(room);
             room.setReserved(false);
-            room.setUserid(null);
-            room.setReservedDates(null);
+            room.setUserId(null);
+            room.setReservedDates(new ArrayList<>());
         }
     }
 
