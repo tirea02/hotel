@@ -27,7 +27,7 @@ public class User {
     private String userName;
     private List<Room> userReservedRooms;
 
-    static String userFileName = "data/userData.json";
+    static String userFileName = "src/net/hb/work/hotel/data/userData.json";
 
     public User(String id, String userId, String pwd, String userName) {
         this.id = id;
@@ -61,12 +61,14 @@ public class User {
         userReservedRooms.add(room);
     }
 
-    public void removeReservation(Room room, Date date) {
-        room.removeReservedDate(date);
-        if (room.getReservedDates().isEmpty()) {
+
+    public void removeReservation(Room room) {
+        if (userReservedRooms.contains(room)) {
+            userReservedRooms.remove(room);
             room.setReserved(false);
+            room.setUserid(null);
+            room.setReservedDates(null);
         }
-        userReservedRooms.remove(room);
     }
 
     public static User findUserWithId(ArrayList<User> users, String userId){

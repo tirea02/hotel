@@ -6,10 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,7 +25,7 @@ public class Hotel {
     private Room[][] rooms;
     private Scanner sc;
 
-    static String hotelFileName = "data/hotelData.json";
+    static String hotelFileName = "src/net/hb/work/hotel/data/hotelData.json";
 
     public Hotel() {
         rooms = null;
@@ -182,17 +179,70 @@ public class Hotel {
         // Save updated hotel and user data
         this.saveHotelData(this);
         saveUserData(users);
+//        scanner.close();
 
         System.out.println("예약이 완료되었습니다.");
     }//function makeReservation end
 
     public void cancelReservation(User user, ArrayList<User> users){
+        Scanner scanner = new Scanner(System.in);
         System.out.println(user.getUserName()+"님 취소하실 방을 골라주세요");
 
-        printListOfRooms(this.getRooms());
+        //show user reserved room
+        printSelectedUserRoomList(user);
+
+        boolean isInputValid = false;
+        String selectedRoomNumber ="";
+
+        while(!isInputValid) {
+            selectedRoomNumber = scanner.nextLine();
+            for (Room room : user.getUserReservedRooms()) {
+                if (room.getRoomNumber().equals(selectedRoomNumber)) {
+                    isInputValid = true;
+                    break;
+                }
+            }
+            if(!isInputValid) {
+                System.out.println("예약한 방번호가 아닙니다.");
+                System.out.println("예약취소를 취소하시려면 9를 입력하세요, 계속하시려면 취소하려는 방번호를 입력해주세요.");
+                if (scanner.nextLine().equals("9")) {
+                    return;
+                }
+            }
+        }
+
+//        Iterator<Room> iterator = user.getUserReservedRooms().iterator();
+//        while (iterator.hasNext()) {
+//            Room room = iterator.next();
+//            if (room.getRoomNumber().equals(selectedRoomNumber)) {
+//                iterator.remove();
+//                break;
+//            }
+//        }
+
+        // Find the selected room in the hotel
+        Room selectedRoom = Room.findRoomByNumber(this.getRooms(), selectedRoomNumber);
+
+        // remove room from Room[][]
+        selectedRoom.setReserved(false);
+        selectedRoom.setUserid(null);
+        selectedRoom.setReservedDates(null);
 
 
-    }
+        // Update user's reservation information
+        user.removeReservation(selectedRoom);
+
+        //update users
+        user.updateUsers(users, user);
+
+        // Save updated hotel and user data
+        this.saveHotelData(this);
+        saveUserData(users);
+//        scanner.close();
+
+        System.out.println("예약이 취소되었습니다.");
+
+    }//function cancelReservation end
 
 
 
@@ -234,6 +284,11 @@ class HotelWork {
     String headMessage="";
     Boolean isLogin = false;
     public static void main(String[] args) {
+        //see your working dir
+//        String workingDir = System.getProperty("user.dir");
+//        System.out.println("Working Directory: " + workingDir);
+
+
         //generate new hotel
         HotelWork hotelWork = new HotelWork();
         //check if hotel present and load data
@@ -249,7 +304,7 @@ class HotelWork {
 
     public void run(Hotel hotel) {
         Scanner sc = new Scanner(System.in);
-        // chekc if room is not loaded
+        // check if room is not loaded
         if (hotel.getRooms() == null) {
             hotel.generateHotelRoom();
         }
@@ -333,8 +388,8 @@ class HotelWork {
 
 
             System.out.print("메뉴 선택: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline character
+            int choice = Integer.parseInt(scanner.nextLine());
+
 
             switch (choice) {
                 case 1 -> {
@@ -347,6 +402,8 @@ class HotelWork {
                 }
                 case 3 -> {
                     // 예약 취소하기 로직
+                    ArrayList < User > users = loadUserData();
+                    hotel.cancelReservation(user, users);
                 }
                 case 4 -> {
                     hotel.printSelectedUserRoomList(user);
